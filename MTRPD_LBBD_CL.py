@@ -6,7 +6,6 @@ from gurobipy import GRB
 import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
-import pandas as pd
 import time
 
 
@@ -1178,7 +1177,7 @@ def solve_MP_model(model: gp.Model,
             resultDroneArrivingTime3[(endNode, level)] = droneArrivingTime[2][(endNode, level)].X
 
     result = {}
-    result['nodesColors'] = colors
+    result['nodesColors'] = colors #red = Truck, green = Drone
     result['truckNodes'] = chosenNodesVisitedByTruck
     result['truckArcs'] = chosenArcsVisitedByTruck
     result['droneArcs'] = chosenArcsVisitedByDrone
@@ -1272,7 +1271,7 @@ def solve_SP_model(model:gp.Model,
             resultDroneArrivingTime[(endNode, droneTrip, level)] = droneArrivingTime[(endNode, droneTrip, level)].X
 
     result = {}
-    result['nodesColors'] = colors
+    result['nodesColors'] = colors #red = Truck, green = Drone
     result['droneArcs'] = chosenArcsVisitedByDrone
     result['truckArrivingTimes'] = resultTruckArrivingTime
     result['droneArrivingTimes'] = resultDroneArrivingTime

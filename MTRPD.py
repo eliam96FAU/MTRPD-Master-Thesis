@@ -5,8 +5,6 @@ from gurobipy import GRB
 import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
-import pandas as pd
-import time
 
 # function to create the graph
 def create_graph(nodeList, arcList):
@@ -27,13 +25,13 @@ def create_graph(nodeList, arcList):
 # droneSpeed -> Drone Speed
 # relax -> solving the relaxation of the problem?
 def create_largeNumberTRPD(
-                 graph:nx.DiGraph,
-                 numberOfDrones:int,
-                 numberOfTrips:int,
-                 largeNumber:int,
-                 flightEndurance:float,
-                 droneSpeed:int,
-                 relax:bool):
+                 graph: nx.DiGraph,
+                 numberOfDrones: int,
+                 numberOfTrips: int,
+                 largeNumber: int,
+                 flightEndurance: float,
+                 droneSpeed: int,
+                 relax: bool):
     # Initialize the model
     model = gp.Model()
 
@@ -470,16 +468,16 @@ def read_instance_file(fileName):
     return graphLocations, graphArcsWithWeights, graph
 
 # solve the largeNumberTRPD model
-def solve_model(model:gp.Model,
-                nodesVisitedByTruck:dict,
-                arcsVisitedByTruck:dict,
-                arcsVisitedByDrone:dict,
-                truckArrivingTime:dict,
-                droneArrivingTime:dict,
-                efficientSolvingGurobi:bool,
-                graph:nx.DiGraph,
-                droneSpeed:int,
-                relax:bool):
+def solve_model(model: gp.Model,
+                nodesVisitedByTruck: dict,
+                arcsVisitedByTruck: dict,
+                arcsVisitedByDrone: dict,
+                truckArrivingTime: dict,
+                droneArrivingTime: dict,
+                efficientSolvingGurobi: bool,
+                graph: nx.DiGraph,
+                droneSpeed: int,
+                relax: bool):
     # traveling time of truck and drone
     # get the traveling times (dict) --> (arc) : weight
     travelingTimeTruck = nx.get_edge_attributes(graph, 'weight')
@@ -575,14 +573,14 @@ def solve_model(model:gp.Model,
             key=lambda t: t[0][2], reverse=True
         ))
         result = {}
-        result['nodesColors'] = colors
+        result['nodesColors'] = colors #red = Truck, green = Drone
         result['truckNodes'] = chosenNodesVisitedByTruck
         result['truckArcs'] = chosenArcsVisitedByTruck
         result['droneArcs'] = chosenArcsVisitedByDrone
         result['truckArrivingTimes'] = resultTruckArrivingTime
         result['droneArrivingTimes'] = resultDroneArrivingTime
         result['objectiveValue'] = model.objVal
-        result['optGap'] = model.largeNumberIPGap*100
+        result['optGap'] = model.MIPGap*100
         result['cpu'] = model.runtime
         return result
 
@@ -641,14 +639,14 @@ def solve_model(model:gp.Model,
         ))
 
         result = {}
-        result['nodesColors'] = colors
+        result['nodesColors'] = colors #red = Truck, green = Drone
         result['truckNodes'] = chosenNodesVisitedByTruck
         result['truckArcs'] = chosenArcsVisitedByTruck
         result['droneArcs'] = chosenArcsVisitedByDrone
         result['truckArrivingTimes'] = resultTruckArrivingTime
         result['droneArrivingTimes'] = resultDroneArrivingTime
         result['objectiveValue'] = model.objVal
-        result['optGap'] = model.largeNumberIPGap*100
+        result['optGap'] = model.MIPGap*100
         result['cpu'] = model.runtime
         return result
 
@@ -679,8 +677,7 @@ def main():
         travelingTimeDrone = {arc: int(time / droneSpeed) for (arc, time) in travelingTimeTruck.items()}
         flightEndurance = np.ceil(2 * max(travelingTimeDrone.values()))
         model, constraints, nodesVisitedByTruck, arcsVisitedByTruck, arcsVisitedByDrone, truckArrivingTime, droneArrivingTime = \
-            create_largeNumberTRPD(graph, numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed,
-                         relax)
+            create_largeNumberTRPD(graph, numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed, relax)
 
         results[instance] = solve_model(model,
                                         nodesVisitedByTruck,
@@ -703,8 +700,7 @@ def main():
         travelingTimeDrone = {arc: int(time / droneSpeed) for (arc, time) in travelingTimeTruck.items()}
         flightEndurance = np.ceil(2 * max(travelingTimeDrone.values()))
         model, constraints, nodesVisitedByTruck, arcsVisitedByTruck, arcsVisitedByDrone, truckArrivingTime, droneArrivingTime = \
-            create_largeNumberTRPD(graph, numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed,
-                         relax)
+            create_largeNumberTRPD(graph, numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed, relax)
 
         results[instance] = solve_model(model,
                                         nodesVisitedByTruck,
@@ -727,8 +723,7 @@ def main():
         travelingTimeDrone = {arc: int(time / droneSpeed) for (arc, time) in travelingTimeTruck.items()}
         flightEndurance = np.ceil(2 * max(travelingTimeDrone.values()))
         model, constraints, nodesVisitedByTruck, arcsVisitedByTruck, arcsVisitedByDrone, truckArrivingTime, droneArrivingTime = \
-            create_largeNumberTRPD(graph, numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed,
-                         relax)
+            create_largeNumberTRPD(graph, numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed, relax)
 
         results[instance] = solve_model(model,
                                         nodesVisitedByTruck,
@@ -752,8 +747,7 @@ def main():
         travelingTimeDrone = {arc: int(time / droneSpeed) for (arc, time) in travelingTimeTruck.items()}
         flightEndurance = np.ceil(2 * max(travelingTimeDrone.values()))
         model, constraints, nodesVisitedByTruck, arcsVisitedByTruck, arcsVisitedByDrone, truckArrivingTime, droneArrivingTime = \
-            create_largeNumberTRPD(graph,  numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed,
-                         relax)
+            create_largeNumberTRPD(graph,  numberOfDrones, numberOfTrips, largeNumber, flightEndurance, droneSpeed, relax)
 
         results[instance] = solve_model(model,
                                         nodesVisitedByTruck,

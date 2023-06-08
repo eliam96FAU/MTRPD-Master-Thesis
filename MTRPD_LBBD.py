@@ -7,7 +7,6 @@ from gurobipy import GRB
 import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
-import pandas as pd
 
 
 # function to create the graph
@@ -24,16 +23,16 @@ def create_graph(nodeList, arcList):
 # graph -> Graph;
 # numberOfDrones -> Number of available drones;
 # numberOfTrips -> Number of possible trips;
-# M -> large number;
+# largeNumber -> large number;
 # flightEndurance -> flight endurance of the drones;
 # droneSpeed -> Drone Speed
 # relax -> solving the relaxation of the problem?
-def create_MTRPD_MP(graph:nx.DiGraph,
-                    numberOfDrones:int,
-                    numberOfTrips:int,
-                    flightEndurance:float,
-                    droneSpeed:int,
-                    relax:bool):
+def create_MTRPD_MP(graph: nx.DiGraph,
+                    numberOfDrones: int,
+                    numberOfTrips: int,
+                    flightEndurance: float,
+                    droneSpeed: int,
+                    relax: bool):
     # Initialize the model
     model = gp.Model()
 
@@ -453,21 +452,21 @@ def create_MTRPD_MP(graph:nx.DiGraph,
 # graph -> Graph;
 # numberOfDrones -> Number of available drones;
 # numberOfTrips -> Number of possible trips;
-# M -> large number;
+# largeNumber -> large number;
 # flightEndurance -> flight endurance of the drones;
 # droneSpeed -> Drone Speed
 # chosenNodesTruck -> the nodes visited by the truck according to the MP solution
 # chosenArcsTruck -> the arcs connecting the chosenNodesTruck
 # relax -> solving the relaxation of the problem?
-def create_MTRPD_SP(graph:nx.DiGraph,
-                    numberOfDrones:int,
-                    numberOfTrips:int,
-                    M:int,
-                    flightEndurance:float,
-                    droneSpeed:int,
-                    chosenNodesTruck:dict,
-                    chosenArcsTruck:dict,
-                    relax:bool):
+def create_MTRPD_SP(graph: nx.DiGraph,
+                    numberOfDrones: int,
+                    numberOfTrips: int,
+                    largeNumber: int,
+                    flightEndurance: float,
+                    droneSpeed: int,
+                    chosenNodesTruck: dict,
+                    chosenArcsTruck: dict,
+                    relax: bool):
 
     # Initialize the model
     model = gp.Model()
@@ -645,7 +644,7 @@ def create_MTRPD_SP(graph:nx.DiGraph,
                                         (launchNode, endNode, drone, droneTrip, level)]
                                     for launchNode in graph.nodes() if launchNode != endNode
                                 )
-                                - M * (1 - sum(
+                                - largeNumber * (1 - sum(
                                     arcsVisitedByDrone[(launchNode, endNode, drone, droneTrip, level)]
                                     for launchNode in graph.nodes() if launchNode != endNode
                                 )),
@@ -677,7 +676,7 @@ def create_MTRPD_SP(graph:nx.DiGraph,
                                         (launchNode, endNode, drone, droneTrip, level)]
                                     for launchNode in graph.nodes() if launchNode != endNode
                                 )
-                                - M * (1 - sum(
+                                - largeNumber * (1 - sum(
                                     arcsVisitedByDrone[(launchNode, endNode, drone, droneTrip, level)]
                                     for launchNode in graph.nodes() if launchNode != endNode
                                 )),
@@ -813,16 +812,16 @@ def read_instance_file(fileName):
     return graphLocations, graphArcsWithWeights, graph
 
 # function to solve the MP model
-def solve_MP_model(model:gp.Model,
-                nodesVisitedByTruck:dict,
-                arcsVisitedByTruck:dict,
-                arcsVisitedByDrone:dict,
-                truckArrivingTime:dict,
-                droneArrivingTime:dict,
-                efficientSolvingGurobi:bool,
-                graph:nx.DiGraph,
-                droneSpeed:int,
-                t1:time.time):
+def solve_MP_model(model: gp.Model,
+                nodesVisitedByTruck: dict,
+                arcsVisitedByTruck: dict,
+                arcsVisitedByDrone: dict,
+                truckArrivingTime: dict,
+                droneArrivingTime: dict,
+                efficientSolvingGurobi: bool,
+                graph: nx.DiGraph,
+                droneSpeed: int,
+                t1: time.time):
     # traveling time of truck and drone
     # get the traveling times (dict) --> (arc) : weight
     travelingTimeTruck = nx.get_edge_attributes(graph, 'weight')
@@ -916,7 +915,7 @@ def solve_MP_model(model:gp.Model,
             resultDroneArrivingTime3[(endNode,level)] = droneArrivingTime[2][(endNode, level)].X
 
     result = {}
-    result['nodesColors'] = colors
+    result['nodesColors'] = colors #red = Truck, green = Drone
     result['truckNodes'] = chosenNodesVisitedByTruck
     result['truckArcs'] = chosenArcsVisitedByTruck
     result['droneArcs'] = chosenArcsVisitedByDrone
@@ -926,16 +925,16 @@ def solve_MP_model(model:gp.Model,
     return result
 
 # function to solve the SP model
-def solve_SP_model(model:gp.Model,
-                   chosenNodesVisitedByTruck:dict,
-                   chosenArcsVisitedByTruck:dict,
-                   arcsVisitedByDrone:dict,
-                   truckArrivingTime:dict,
-                   droneArrivingTime:dict,
-                   efficientSolvingGurobi:bool,
-                   graph:nx.DiGraph,
-                   droneSpeed:int,
-                   t1:time.time):
+def solve_SP_model(model: gp.Model,
+                   chosenNodesVisitedByTruck: dict,
+                   chosenArcsVisitedByTruck: dict,
+                   arcsVisitedByDrone: dict,
+                   truckArrivingTime: dict,
+                   droneArrivingTime: dict,
+                   efficientSolvingGurobi: bool,
+                   graph: nx.DiGraph,
+                   droneSpeed: int,
+                   t1: time.time):
 
     # traveling time of truck and drone
     # get the traveling times (dict) --> (arc) : weight
@@ -1012,7 +1011,7 @@ def solve_SP_model(model:gp.Model,
             resultDroneArrivingTime[(endNode, droneTrip, level)] = droneArrivingTime[(endNode, droneTrip, level)].X
 
     result = {}
-    result['nodesColors'] = colors
+    result['nodesColors'] = colors #red = Truck, green = Drone
     result['droneArcs'] = chosenArcsVisitedByDrone
     result['truckArrivingTimes'] = resultTruckArrivingTime
     result['droneArrivingTimes'] = resultDroneArrivingTime
