@@ -384,7 +384,7 @@ def create_largeNumberTRPD(
                                 name='(13_[i = {0}, j = {1}, k = {2}, q = {3}, l = {4}])_d'.format(launchNode, endNode, drone, droneTrip, level)
                             ))
 
-    # (test condition) the depot node shouldn't be visited by the truck at level 1
+    # the depot node shouldn't be visited by the truck at level 1
     model.addConstr(
         nodesVisitedByTruck[(0, 1)] == 0
     )
